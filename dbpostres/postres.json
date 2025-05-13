@@ -1,0 +1,33 @@
+ [
+      {
+        "id": 1,
+        "nombre": "Pastel de chocolate",
+        "precio_por_porcion_dop": 200,
+        "precio_completo_dop": 1500
+      },
+      {
+        "id": 2,
+        "nombre": "Cheesecake de fresa",
+        "precio_por_porcion_dop": 250,
+        "precio_completo_dop": 1800
+      },
+      {
+        "id": 3,
+        "nombre": "Tiramisú",
+        "precio_por_porcion_dop": 270,
+        "precio_completo_dop": 2000
+      },
+      {
+        "id": 4,
+        "nombre": "Flan napolitano",
+        "precio_por_porcion_dop": 150,
+        "precio_completo_dop": 1200
+      },
+      {
+        "id": 5,
+        "nombre": "Tres leches",
+        "precio_por_porcion_dop": 180,
+        "precio_completo_dop": 1400
+      }
+    ]
+  
