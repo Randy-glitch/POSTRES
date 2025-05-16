@@ -6,4 +6,4 @@ const postreSchema = z.object({
     precio_completo_dop: z.number().positive('Debe ser un número positivo'),
   });
 
-module.exports = {postreSchema}
+module.exports = { postreSchema }

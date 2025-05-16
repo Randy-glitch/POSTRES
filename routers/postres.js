@@ -14,7 +14,7 @@ router.get('/', (req, res) => {
 });
 router.get('/:id', (req, res) => {
     const id = req.params.id
-    const postre = postres.find(p => p.id === id);
+    const postre = postres.find(p => String(p.id) === String(id));
   
     if (!postre) {
         res.status(404).json({ mensaje: 'Postre no encontrado' });
@@ -47,40 +47,55 @@ router.post('/', (req, res) => {
     });
 });
 
-router.put('/:id', (req, res) => {
-    const validacion = postreSchema.safeParse(req.body);
-  
-    if (!validacion.success) {
-      return res.status(400).json({
-        error: 'Datos inválidos',
-        detalles: validacion.error.format(),
-      });
-    }
 
-    const id = req.params.id
-    const postre = postres.findIndex(p => String(p.id) === String(id));
-    if (!postre) {
-      res.status(404).json({ mensaje: 'Postre no encontrado' });
-    } 
+router.patch('/:id', (req, res) => {
+  const id = req.params.id
+  const postre = postres.findIndex(p => String(p.id) === String(id));
+  if (!postre) {
+    res.status(404).json({ mensaje: 'Postre no encontrado' });
+  }  
 
-    console.log(postre);
-    
-    const postreActualizado = {
-      id, // mantener el mismo ID
-      ...validacion.data
-    };
+  const validacion = postreSchema.partial().safeParse(req.body);
 
-    postres[postre] = {
-      ...postres[postre],
-      ...postreActualizado
-    }
-    
-
-    // Aquí podrías guardar el postre en la base de datos, etc.
-    res.status(201).json({
-      mensaje: 'Postre actualizado correctamente',
-      data: postreActualizado,
+  if (!validacion.success) {
+    return res.status(400).json({
+      error: 'Datos inválidos',
+      detalles: validacion.error.format(),
     });
+  }
+  
+  const postreActualizado = {
+    id, // mantener el mismo ID
+    ...validacion.data
+  };
+
+  postres[postre] = {
+    ...postres[postre],
+    ...postreActualizado
+  }
+
+  // Aquí podrías guardar el postre en la base de datos, etc.
+  res.status(201).json({
+    mensaje: 'Postre actualizado correctamente',
+    data: postreActualizado,
+  });
 });
 
+router.delete("/:id", (req, res) => {
+  const  id  = req.params.id
+
+  const postre = postres.findIndex(p => String(p.id) === String(id))
+
+ 
+  if (postre === -1) {
+    res.status(404).json({ mensaje: 'Postre no encontrado' });
+  }
+
+  postres.splice(postre, 1)
+
+  res.status(201).json({
+    mensaje: 'Postre eliminado correctamente',
+    data: postres,
+  });
+})
 module.exports = router
