@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
+const authenticateToken = require("../controllers/authmiddleware")
 
 
-
-const postres = require("../dbpostres/postres.json")
-const {postreSchema} = require("../SchemasValidations/schema")
+const postres = require("../db/postres.json")
+const {postreSchema} = require("../controllers/schema")
 router.use(express.json())
 
 
@@ -47,16 +47,9 @@ router.post('/', (req, res) => {
     });
 });
 
-
 router.patch('/:id', (req, res) => {
-  const id = req.params.id
-  const postre = postres.findIndex(p => String(p.id) === String(id));
-  if (!postre) {
-    res.status(404).json({ mensaje: 'Postre no encontrado' });
-  }  
-
   const validacion = postreSchema.partial().safeParse(req.body);
-
+  
   if (!validacion.success) {
     return res.status(400).json({
       error: 'Datos inválidos',
@@ -64,16 +57,25 @@ router.patch('/:id', (req, res) => {
     });
   }
   
+  const id = req.params.id
+  const postre = postres.findIndex(p => String(p.id) === String(id));
+  if (!postre) {
+    res.status(404).json({ mensaje: 'Postre no encontrado' });
+  } 
+  
+  console.log(postre);
+  
   const postreActualizado = {
     id, // mantener el mismo ID
     ...validacion.data
   };
-
+  
   postres[postre] = {
     ...postres[postre],
     ...postreActualizado
   }
-
+  
+  
   // Aquí podrías guardar el postre en la base de datos, etc.
   res.status(201).json({
     mensaje: 'Postre actualizado correctamente',
@@ -81,21 +83,19 @@ router.patch('/:id', (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
-  const  id  = req.params.id
-
+router.delete("/:id", authenticateToken,  (req,res) => {
+  const id = req.params.id
+  
   const postre = postres.findIndex(p => String(p.id) === String(id))
-
- 
+  console.log(postre)
+  
   if (postre === -1) {
-    res.status(404).json({ mensaje: 'Postre no encontrado' });
+    res.status(404).json({msg: "item no exixte"})
   }
-
+  
   postres.splice(postre, 1)
-
-  res.status(201).json({
-    mensaje: 'Postre eliminado correctamente',
-    data: postres,
-  });
+  
+  res.status(200).json({msg: "postre deleted !"})
 })
+
 module.exports = router

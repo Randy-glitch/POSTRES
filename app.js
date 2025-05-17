@@ -1,15 +1,19 @@
+require('dotenv').config({path: "./.env"});
 const express = require("express")
-// const postres = require("./dbpostres/postres.json")
-
+const postresRouter = require("./routers/postres")
+const authRouter = require("./routers/auth")
+const cookieParser = require('cookie-parser');
 
 const app = express()
 
 // MIDDLEWARE
 app.use(express.json())
+app.use(cookieParser());
 app.disable("x-powered-by")
+
 // router import
-const postresRouter = require("./routers/postres")
 app.use('/postres', postresRouter)
+app.use('/auth', authRouter)
 
 
 const PORT = process.env.PORT ?? 1234
